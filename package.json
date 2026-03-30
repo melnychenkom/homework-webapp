@@ -1,0 +1,23 @@
+{
+  "name": "blast-webapp",
+  "version": "1.0.0",
+  "description": "Topic: BLAST description.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/melnychenkom/homework-webapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/melnychenkom/homework-webapp/issues"
+  },
+  "homepage": "https://github.com/melnychenkom/homework-webapp#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  }
+}

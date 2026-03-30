@@ -2,27 +2,46 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>BLAST і пошук гомологів</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/custom.css" />
   </head>
   <body>
-    <header class="hero">
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase sticky-top" id="mainNav">
       <div class="container">
-        <h1>BLAST і пошук гомологів</h1>
-        <p class="subtitle">
-          Пошук схожих послідовностей у біологічних базах даних.
-        </p>
+        <a class="navbar-brand" href="#page-top">BLAST</a>
+        <button
+          class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          Menu
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#about">Суть</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#workflow">Схема</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#terms">Поняття</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#example">Приклад</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#feedback">Форма</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#messages">Повідомлення</a></li>
+          </ul>
+        </div>
       </div>
-    </header>
-
+    </nav>
     <main class="container">
       <section class="card mb-3" id="about">
         <div class="card-header">
@@ -56,7 +75,7 @@
         </ol>
 
         <div class="image-placeholder" role="img" aria-label="Плейсхолдер схеми BLAST">
-          <img src="img/blast-schema.jpg" alt="Схема роботи BLAST" class="workflow-image" />
+          <img src="assets/img/blast-schema.jpg" alt="Схема роботи BLAST" class="workflow-image image-native"/>
         </div>
         </div>
       </section>
@@ -126,7 +145,7 @@
             Висновок: DHODH сильно консервативний від ссавців до бактерій.
           </p>
           <div class="image-placeholder" role="img" aria-label="Перший приклад результату BLAST">
-            <img src="img/blast-result-dhodh.png" alt="Приклад результату BLAST для DHODH" class="result-image" />
+            <img src="assets/img/blast-result-dhodh.png" alt="Приклад результату BLAST для DHODH" class="result-image" />
           </div>
         </article>
 
@@ -155,7 +174,7 @@
             еволюційно консервативним серед приматів.
           </p>
           <div class="image-placeholder" role="img" aria-label="Другий приклад результату BLAST">
-            <img src="img/blast-result-m5.png" alt="Другий приклад результату BLAST" class="result-image" />
+            <img src="assets/img/blast-result-m5.png" alt="Другий приклад результату BLAST" class="result-image" />
           </div>
         </article>
         </div>
@@ -204,5 +223,9 @@
         </div>
       </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>

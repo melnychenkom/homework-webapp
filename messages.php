@@ -5,16 +5,18 @@ $stmt = $pdo->query('SELECT id, username, email, message, created_at FROM feedba
 $messages = $stmt->fetchAll();
 ?>
 <?php if (empty($messages)) : ?>
-  <p>Поки що повідомлень немає.</p>
+  <div class="list-group-item text-muted">Поки що повідомлень немає.</div>
 <?php else : ?>
   <?php foreach ($messages as $row) : ?>
-    <article class="message-item" data-id="<?= (int) $row['id'] ?>">
-      <div class="message-header">
-        <h3><?= htmlspecialchars($row['username']) ?></h3>
-        <button type="button" class="delete-message-btn">Видалити</button>
+    <div class="list-group-item message-item" data-id="<?= (int) $row['id'] ?>">
+      <div class="d-flex align-items-start justify-content-between gap-2">
+        <div>
+          <h3 class="h6 mb-1"><?= htmlspecialchars($row['username']) ?></h3>
+          <p class="mb-2"><?= nl2br(htmlspecialchars($row['message'])) ?></p>
+          <small class="text-muted"><?= htmlspecialchars($row['email']) ?> · <?= htmlspecialchars($row['created_at']) ?></small>
+        </div>
+        <button type="button" class="btn btn-outline-danger btn-sm delete-message-btn">Видалити</button>
       </div>
-      <p><?= nl2br(htmlspecialchars($row['message'])) ?></p>
-      <p class="message-meta"><?= htmlspecialchars($row['email']) ?> · <?= htmlspecialchars($row['created_at']) ?></p>
-    </article>
+    </div>
   <?php endforeach; ?>
 <?php endif; ?>

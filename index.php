@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BLAST і пошук гомологів</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="style.css" />
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     <script src="script.js" defer></script>
   </head>
@@ -19,8 +24,11 @@
     </header>
 
     <main class="container">
-      <section class="card" id="about">
-        <h2>Суть явища</h2>
+      <section class="card mb-3" id="about">
+        <div class="card-header">
+          <h2 class="card-title">Суть явища</h2>
+        </div>
+        <div class="card-body">
         <p>
           Гомологи — це біологічні послідовності (ДНК, РНК або білки), які мають
           спільне еволюційне походження. Інструмент BLAST (Basic Local Alignment
@@ -31,10 +39,14 @@
           Такий пошук використовують для анотації генів, виявлення функціонально
           подібних білків і порівняння організмів на молекулярному рівні.
         </p>
+        </div>
       </section>
 
-      <section class="card" id="workflow">
-        <h2>Схема роботи BLAST</h2>
+      <section class="card mb-3" id="workflow">
+        <div class="card-header">
+          <h2 class="card-title">Схема роботи BLAST</h2>
+        </div>
+        <div class="card-body">
         <ol>
           <li>Введення запитної послідовності (query).</li>
           <li>Розбиття запиту на короткі "слова" (k-mers).</li>
@@ -46,10 +58,14 @@
         <div class="image-placeholder" role="img" aria-label="Плейсхолдер схеми BLAST">
           <img src="img/blast-schema.jpg" alt="Схема роботи BLAST" class="workflow-image" />
         </div>
+        </div>
       </section>
 
-      <section class="card" id="terms">
-        <h2>Ключові поняття</h2>
+      <section class="card mb-3" id="terms">
+        <div class="card-header">
+          <h2 class="card-title">Ключові поняття</h2>
+        </div>
+        <div class="card-body">
         <div class="terms-grid">
           <article class="term">
             <h3>Hit</h3>
@@ -73,13 +89,19 @@
             </p>
           </article>
         </div>
+        </div>
       </section>
 
-      <section class="card" id="example">
-        <h2>Приклад результату пошуку</h2>
-        <button type="button" id="change-example-btn" class="change-example-btn">
-          Змінити приклад
-        </button>
+      <section class="card mb-3" id="example">
+        <div class="card-header">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <h2 class="card-title mb-0">Приклад результату пошуку</h2>
+            <button type="button" id="change-example-btn" class="btn btn-dark">
+              Змінити приклад
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
 
         <article class="example-content" id="example-one">
           <p>
@@ -136,34 +158,49 @@
             <img src="img/blast-result-m5.png" alt="Другий приклад результату BLAST" class="result-image" />
           </div>
         </article>
+        </div>
       </section>
 
-      <section class="card" id="feedback">
-        <h2>Зворотній зв'язок</h2>
-        <form id="feedback-form" class="feedback-form" action="submit.php" method="post">
-          <label for="name">Ім'я</label>
-          <input type="text" id="name" name="name" required />
+      <section class="card mb-3" id="feedback">
+        <div class="card-header">
+          <h2 class="card-title">Зворотній зв'язок</h2>
+        </div>
+        <div class="card-body">
+          <form id="feedback-form" action="submit.php" method="post">
+          <div class="mb-3">
+            <label for="name" class="form-label">Ім'я</label>
+            <input type="text" id="name" name="name" class="form-control" required />
+          </div>
 
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required />
+          </div>
 
-          <label for="message">Повідомлення</label>
-          <textarea id="message" name="message" rows="4" required></textarea>
+          <div class="mb-3">
+            <label for="message" class="form-label">Повідомлення</label>
+            <textarea id="message" name="message" rows="4" class="form-control" required></textarea>
+          </div>
 
-          <button type="submit" class="change-example-btn">Надіслати</button>
-          <p id="form-status" aria-live="polite"></p>
-        </form>
+          <button type="submit" class="btn btn-dark">Надіслати</button>
+          <p id="form-status" class="mt-2 fw-semibold" aria-live="polite"></p>
+          </form>
+        </div>
       </section>
 
-      <section class="card" id="messages">
-        <h2>Повідомлення</h2>
-        <div
-          class="messages-list"
-          hx-get="messages.php"
-          hx-trigger="load, feedback:submitted from:body, message:deleted from:body"
-          hx-swap="innerHTML"
-        >
-          <p>Завантаження повідомлень...</p>
+      <section class="card mb-3" id="messages">
+        <div class="card-header">
+          <h2 class="card-title">Повідомлення</h2>
+        </div>
+        <div class="card-body">
+          <div
+            class="messages-list list-group"
+            hx-get="messages.php"
+            hx-trigger="load, feedback:submitted from:body, message:deleted from:body"
+            hx-swap="innerHTML"
+          >
+            <p>Завантаження повідомлень...</p>
+          </div>
         </div>
       </section>
     </main>

@@ -1,10 +1,3 @@
-<?php
-require_once __DIR__ . '/db.php';
-
-$messages = [];
-$stmt = $pdo->query('SELECT id, username, email, message, created_at FROM feedback ORDER BY created_at DESC');
-$messages = $stmt->fetchAll();
-?>
 <!DOCTYPE html>
 <html lang="uk">
   <head>
@@ -12,6 +5,7 @@ $messages = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BLAST і пошук гомологів</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -163,22 +157,14 @@ $messages = $stmt->fetchAll();
 
       <section class="card" id="messages">
         <h2>Повідомлення</h2>
-        <?php if (empty($messages)) : ?>
-          <p>Поки що повідомлень немає.</p>
-        <?php else : ?>
-          <div class="messages-list">
-            <?php foreach ($messages as $row) : ?>
-              <article class="message-item" data-id="<?= (int) $row['id'] ?>">
-                <div class="message-header">
-                  <h3><?= htmlspecialchars($row['username']) ?></h3>
-                  <button type="button" class="delete-message-btn">Видалити</button>
-                </div>
-                <p><?= nl2br(htmlspecialchars($row['message'])) ?></p>
-                <p class="message-meta"><?= htmlspecialchars($row['email']) ?> · <?= htmlspecialchars($row['created_at']) ?></p>
-              </article>
-            <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
+        <div
+          class="messages-list"
+          hx-get="messages.php"
+          hx-trigger="load, feedback:submitted from:body, message:deleted from:body"
+          hx-swap="innerHTML"
+        >
+          <p>Завантаження повідомлень...</p>
+        </div>
       </section>
     </main>
   </body>

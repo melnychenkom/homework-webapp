@@ -37,6 +37,7 @@ if (feedbackForm && formStatus) {
             if (result.success) {
                 formStatus.textContent = result.message;
                 feedbackForm.reset();
+                document.body.dispatchEvent(new Event("feedback:submitted"));
             } else {
                 formStatus.textContent = result.message || "Помилка надсилання.";
             }
@@ -78,6 +79,7 @@ if (messagesList) {
 
             if (result.success) {
                 messageItem.remove();
+                document.body.dispatchEvent(new Event("message:deleted"));
             } else {
                 alert(result.message || "Не вдалося видалити повідомлення.");
             }

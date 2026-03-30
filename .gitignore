@@ -2,3 +2,4 @@
 /composer
 *.env
 node_modules/
+wordpress

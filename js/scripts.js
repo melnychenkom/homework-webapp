@@ -119,9 +119,13 @@ window.addEventListener('DOMContentLoaded', event => {
 
             const formData = new FormData();
             formData.append("id", messageId);
+            formData.append(
+                "csrfmiddlewaretoken",
+                document.querySelector('[name="csrfmiddlewaretoken"]').value
+            );
 
             try {
-                const response = await fetch("delete.php", {
+                const response = await fetch("/delete/", {
                     method: "POST",
                     body: formData,
                 });

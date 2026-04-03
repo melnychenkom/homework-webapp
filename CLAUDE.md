@@ -4,40 +4,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the App
 
-Requires PHP, MySQL/MariaDB, and Composer. Copy `.env.example` to `.env` (or create `.env`) with database credentials, then:
+Requires Python 3.11+, MySQL, and uv. Create `.env` with database credentials (see below), then:
 
 ```bash
-composer install          # Install PHP dependencies (phpdotenv)
-php -S localhost:8000     # Start local dev server
+uv sync                                    # install Python deps
+uv run manage.py migrate --fake-initial    # first run only (table already exists in MySQL)
+uv run manage.py runserver                 # start dev server at http://localhost:8000
 ```
 
-Bootstrap is installed via npm (`npm install`) but the compiled CSS from the Freelancer template is already included in `css/styles.css` — no build step is needed.
+Run tests (uses SQLite — no MySQL connection needed):
+
+```bash
+uv run manage.py test core
+```
+
+**Note:** The remote MySQL server is version 5.7. Django 5.1+ requires MySQL 8. The app works for tests (SQLite) and local dev, but `migrate` against the remote server will fail until the server is upgraded.
 
 ## Architecture
 
-**LAMP stack** educational site about BLAST (bioinformatics sequence search tool). UI is in Ukrainian.
+**Django 6 + MySQL** educational site about BLAST (bioinformatics sequence search tool). UI is in Ukrainian. Uses PyMySQL as the MySQL driver (pure Python, no system libs needed).
 
-**PHP endpoints:**
-- `index.php` — main page, server-rendered with Bootstrap Freelancer theme
-- `db.php` — shared PDO database connection, loaded via `require_once` in other PHP files
-- `submit.php` — POST handler for feedback form; validates input, inserts into `feedback` table
-- `messages.php` — GET handler; returns rendered HTML of all feedback messages (loaded dynamically by HTMX)
-- `delete.php` — POST handler for deleting a message by ID
+**Django project layout:**
+- `blast/` — project config: `settings.py`, `urls.py`, `wsgi.py`
+- `core/` — single app: `models.py`, `views.py`, `urls.py`, `templates/core/`
 
-**Frontend:**
-- `css/styles.css` — Bootstrap 5 Freelancer theme (do not edit; it's a third-party template)
-- `css/custom.css` — project-specific overrides
-- `js/scripts.js` — navbar scroll effect, example content switcher, async form submission, HTMX-based message reload and deletion
+**Views (`core/views.py`):**
+- `index` — `GET /` — renders `core/index.html` (main page)
+- `messages` — `GET /messages/` — renders `core/messages.html` (HTMX partial; returns message list HTML)
+- `submit` — `POST /submit/` — validates and saves feedback, returns `JsonResponse`
+- `delete_message` — `POST /delete/` — deletes feedback by ID, returns `JsonResponse`
 
-**Database schema** (MySQL):
-```sql
-CREATE TABLE feedback (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(255),
-  email VARCHAR(255),
-  message TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+**Database:** `Feedback` model in `core/models.py` maps to the existing `feedback` MySQL table (`db_table = 'feedback'`). Fields: `id`, `username`, `email`, `message`, `created_at`.
+
+**Static files** (`css/`, `js/`, `assets/`): served by Django's staticfiles app via `STATICFILES_DIRS = [BASE_DIR]`. Referenced in templates with `{% load static %}{% static '...' %}`.
+
+**HTMX** (v1.9.12, CDN) drives the messages list: auto-loads on page open, refreshes after form submission and deletion.
+
+**CSRF:** `{% csrf_token %}` is inside the feedback form (auto-included in `FormData`). The delete JS reads the token from `document.querySelector('[name="csrfmiddlewaretoken"]').value`.
+
+## Environment variables (`.env`)
+
 ```
-
-**HTMX** (v1.9.12, loaded from CDN) drives dynamic content: the messages list auto-refreshes after form submission and after deletion without full page reloads.
+DB_HOST=...
+DB_NAME=...
+DB_USER=...
+DB_PASS=...
+SECRET_KEY=...   # optional in dev; required in prod
+```

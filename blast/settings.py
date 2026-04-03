@@ -21,7 +21,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    'core',
+    'extractor',
 ]
 
 MIDDLEWARE = [
@@ -80,3 +80,6 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LANGGRAPH_URL = os.getenv('LANGGRAPH_URL', 'http://localhost:8000')
+RESULTS_ROOT  = Path(os.getenv('RESULTS_ROOT', BASE_DIR / 'results'))

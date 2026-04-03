@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket Extractor</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+  <h1>Pocket Extractor</h1>
+
+  <section>
+    <h2>Pipeline (PDB + Article)</h2>
+    <form method="post" action="{% url 'submit_pipeline' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label>Target: <input type="text" name="target" required></label><br>
+      <label>PDB file: <input type="file" name="pdb_file" required></label><br>
+      <label>Article file: <input type="file" name="article_file" required></label><br>
+      <button type="submit">Submit pipeline</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>LLM Extraction (Article only)</h2>
+    <form method="post" action="{% url 'submit_extract' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label>Target: <input type="text" name="target" required></label><br>
+      <label>Article file: <input type="file" name="article_file" required></label><br>
+      <button type="submit">Extract</button>
+    </form>
+  </section>
+
+  {% if extract_result %}
+  <section>
+    <h2>Extraction result</h2>
+    <p>Target: {{ extract_result.target }}</p>
+    <ul>
+      {% for pocket in extract_result.pockets %}
+      <li>Pocket {{ pocket.id }} — score {{ pocket.score }} — residues: {{ pocket.residues|join:", " }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</body>
+</html>

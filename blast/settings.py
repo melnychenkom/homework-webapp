@@ -2,6 +2,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import sys
+import pymysql
+pymysql.version_info = (2, 2, 1, 'final', 0)
+pymysql.install_as_MySQLdb()
 
 load_dotenv()
 

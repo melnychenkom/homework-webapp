@@ -3,3 +3,15 @@
 *.env
 node_modules/
 wordpress
+docs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Test database
+test_db.sqlite3

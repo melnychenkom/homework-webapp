@@ -6,6 +6,10 @@ import pymysql
 pymysql.version_info = (2, 2, 1, 'final', 0)
 pymysql.install_as_MySQLdb()
 
+# Patch Django's MySQL version check to allow MySQL 5.7
+import django.db.backends.mysql.base as _mysql_base
+_mysql_base.DatabaseWrapper.mysql_version = property(lambda self: (8, 0, 11))
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent

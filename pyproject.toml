@@ -7,4 +7,5 @@ dependencies = [
     "pymysql>=1.1",
     "python-dotenv>=1.0",
     "gunicorn>=22.0",
+    "whitenoise>=6.7",
 ]

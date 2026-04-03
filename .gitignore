@@ -15,3 +15,6 @@ __pycache__/
 
 # Test database
 test_db.sqlite3
+
+# Collected static files
+staticfiles/

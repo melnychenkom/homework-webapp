@@ -2,33 +2,48 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
 const POLL_INTERVAL = 5000
-const TERMINAL = ['done', 'failed']
+
+type JobStatus = 'pending' | 'running' | 'done' | 'failed'
+
+const TERMINAL: JobStatus[] = ['done', 'failed']
+
+interface Job {
+  job_id: string
+  target: string
+  article_filename: string
+  created_at: string
+  status: JobStatus
+  pockets_json: unknown
+  output_path: string
+  error: string
+  poll_error: string | null
+}
 
 export default function JobDetail() {
-  const { jobId } = useParams()
-  const [job, setJob] = useState(null)
-  const [error, setError] = useState(null)
-  const intervalRef = useRef(null)
+  const { jobId } = useParams<{ jobId: string }>()
+  const [job, setJob] = useState<Job | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   async function fetchStatus() {
     try {
       const res = await fetch(`/jobs/${jobId}/status/`)
       if (!res.ok) throw new Error(`Server error ${res.status}`)
-      const data = await res.json()
+      const data = await res.json() as Job
       setJob(data)
       if (TERMINAL.includes(data.status)) {
-        clearInterval(intervalRef.current)
+        clearInterval(intervalRef.current ?? undefined)
       }
     } catch (err) {
-      setError(err.message)
-      clearInterval(intervalRef.current)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      clearInterval(intervalRef.current ?? undefined)
     }
   }
 
   useEffect(() => {
-    fetchStatus()
-    intervalRef.current = setInterval(fetchStatus, POLL_INTERVAL)
-    return () => clearInterval(intervalRef.current)
+    void fetchStatus()
+    intervalRef.current = setInterval(() => void fetchStatus(), POLL_INTERVAL)
+    return () => clearInterval(intervalRef.current ?? undefined)
   }, [jobId])
 
   return (

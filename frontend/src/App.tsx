@@ -1,25 +1,37 @@
 import { useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import JobDetail from './JobDetail.jsx'
+import JobDetail from './JobDetail'
 import './App.css'
 
-export function getCsrfToken() {
+export function getCsrfToken(): string {
   return document.cookie.split('; ')
     .find(r => r.startsWith('csrftoken='))
     ?.split('=')[1] ?? ''
 }
 
+interface Pocket {
+  id: number
+  score: number
+  residues: string[]
+}
+
+interface ExtractResult {
+  status: string
+  target: string
+  pockets: Pocket[]
+}
+
 function PipelineForm() {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    const data = new FormData(e.target)
+    const data = new FormData(e.currentTarget)
     try {
       const res = await fetch('/pipeline/', {
         method: 'POST',
@@ -30,7 +42,7 @@ function PipelineForm() {
       if (!res.ok) throw new Error(json.error ?? 'Submission failed')
       navigate(`/jobs/${json.job_id}/`)
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : 'Unknown error')
       setLoading(false)
     }
   }
@@ -63,16 +75,16 @@ function PipelineForm() {
 
 function ExtractForm() {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [result, setResult] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<ExtractResult | null>(null)
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
     setResult(null)
 
-    const data = new FormData(e.target)
+    const data = new FormData(e.currentTarget)
     try {
       const res = await fetch('/extract/', {
         method: 'POST',
@@ -81,9 +93,9 @@ function ExtractForm() {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Extraction failed')
-      setResult(json)
+      setResult(json as ExtractResult)
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
       setLoading(false)
     }

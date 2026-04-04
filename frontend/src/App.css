@@ -11,6 +11,7 @@
 }
 
 body { background: #f5f5f5; }
+main.container { max-width: 900px; }
 
 /* Hero */
 .hero { margin-bottom: 2rem; }
@@ -21,7 +22,6 @@ body { background: #f5f5f5; }
 .workflow-diagram { margin: 0 0 1.75rem; }
 .workflow-diagram img {
   width: 100%;
-  max-width: 820px;
   border-radius: .5rem;
   border: 1px solid var(--bs-border-color);
   display: block;

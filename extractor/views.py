@@ -42,8 +42,10 @@ def submit_extract(request):
     article_file = request.FILES.get('article_file')
     target = request.POST.get('target', '')
     kwargs = {k: request.POST[k] for k in
-              ('filter_step', 'refine_step', 'extraction_model', 'filter_model', 'refine_model')
+              ('extraction_model', 'filter_model', 'refine_model')
               if k in request.POST}
+    kwargs['filter_step'] = 'true' if request.POST.get('filter_step') else 'false'
+    kwargs['refine_step'] = 'true' if request.POST.get('refine_step') else 'false'
 
     try:
         job_id_str = services.submit_extract(article_file, target, **kwargs)

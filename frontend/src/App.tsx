@@ -10,38 +10,42 @@ export function getCsrfToken(): string {
     ?.split('=')[1] ?? ''
 }
 
-const DEFAULT_MODEL = 'google_genai:gemini-2.5-flash'
+const MODELS: { value: string; label: string }[] = [
+  { value: 'google_genai:gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+]
 
 function AdvancedSettings() {
   return (
     <details className="advanced">
       <summary>Advanced settings</summary>
       <div className="advanced-fields">
-        <label className="form-label fw-medium small mb-0">
-          Filter step
-          <select name="filter_step" defaultValue="true" className="form-select form-select-sm">
-            <option value="true">Enabled</option>
-            <option value="false">Disabled</option>
-          </select>
-        </label>
-        <label className="form-label fw-medium small mb-0">
-          Refine step
-          <select name="refine_step" defaultValue="true" className="form-select form-select-sm">
-            <option value="true">Enabled</option>
-            <option value="false">Disabled</option>
-          </select>
-        </label>
+        <div className="d-flex gap-3">
+          <div className="form-check form-switch">
+            <input className="form-check-input" type="checkbox" role="switch" name="filter_step" id="filter_step" defaultChecked />
+            <label className="form-check-label small fw-medium" htmlFor="filter_step">Filter step</label>
+          </div>
+          <div className="form-check form-switch">
+            <input className="form-check-input" type="checkbox" role="switch" name="refine_step" id="refine_step" defaultChecked />
+            <label className="form-check-label small fw-medium" htmlFor="refine_step">Refine step</label>
+          </div>
+        </div>
         <label className="form-label fw-medium small mb-0">
           Extraction model
-          <input type="text" name="extraction_model" defaultValue={DEFAULT_MODEL} className="form-control form-control-sm" />
+          <select name="extraction_model" defaultValue={MODELS[0].value} className="form-select form-select-sm">
+            {MODELS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
         </label>
         <label className="form-label fw-medium small mb-0">
           Filter model
-          <input type="text" name="filter_model" defaultValue={DEFAULT_MODEL} className="form-control form-control-sm" />
+          <select name="filter_model" defaultValue={MODELS[0].value} className="form-select form-select-sm">
+            {MODELS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
         </label>
         <label className="form-label fw-medium small mb-0">
           Refine model
-          <input type="text" name="refine_model" defaultValue={DEFAULT_MODEL} className="form-control form-control-sm" />
+          <select name="refine_model" defaultValue={MODELS[0].value} className="form-select form-select-sm">
+            {MODELS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
         </label>
       </div>
     </details>
@@ -76,8 +80,8 @@ function PipelineForm() {
 
   return (
     <div className="card p-3 h-100">
-      <h2 className="fs-6 fw-semibold mb-0">Pipeline</h2>
-      <p className="small text-muted mb-0">Full pipeline — PDB structure + article</p>
+      <h2 className="fs-6 fw-semibold mb-1">Pipeline</h2>
+      <p className="small text-secondary mb-2">Provide a PDB structure and a research article. Runs filter → LLM extraction → geometric mapping → volumetric pocket construction via fpocket.</p>
       <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
         <label className="form-label fw-medium small mb-0">
           Target
@@ -94,7 +98,7 @@ function PipelineForm() {
         {error && <div className="alert alert-danger py-2 px-3 small mb-0">{error}</div>}
         <AdvancedSettings />
         <button type="submit" disabled={loading} className="btn btn-primary btn-sm align-self-start">
-          {loading ? 'Submitting…' : 'Submit pipeline'}
+          {loading ? 'Submitting…' : 'Submit'}
         </button>
       </form>
     </div>
@@ -129,8 +133,8 @@ function ExtractForm() {
 
   return (
     <div className="card p-3 h-100">
-      <h2 className="fs-6 fw-semibold mb-0">LLM Extraction</h2>
-      <p className="small text-muted mb-0">Extract pockets from article only</p>
+      <h2 className="fs-6 fw-semibold mb-1">LLM Extraction</h2>
+      <p className="small text-secondary mb-2">Article-only extraction. The LLM reads the paper and outputs structured residue-level pocket annotations without geometric analysis.</p>
       <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
         <label className="form-label fw-medium small mb-0">
           Target
@@ -143,7 +147,7 @@ function ExtractForm() {
         {error && <div className="alert alert-danger py-2 px-3 small mb-0">{error}</div>}
         <AdvancedSettings />
         <button type="submit" disabled={loading} className="btn btn-primary btn-sm align-self-start">
-          {loading ? 'Submitting…' : 'Extract'}
+          {loading ? 'Submitting…' : 'Submit'}
         </button>
       </form>
     </div>
@@ -176,21 +180,6 @@ function HomePage() {
       <figure className="workflow-diagram">
         <img src={workflowImg} alt="Pocket Extractor workflow diagram" />
       </figure>
-
-      <section className="row g-3 mb-4">
-        <div className="col-md-6">
-          <div className="card p-3 h-100">
-            <h3 className="fs-6 fw-semibold mb-1">Full Pipeline</h3>
-            <p className="small text-secondary mb-0">Provide a PDB structure and a research article. Runs filter → LLM extraction → geometric mapping → volumetric pocket construction via fpocket.</p>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div className="card p-3 h-100">
-            <h3 className="fs-6 fw-semibold mb-1">LLM Extraction</h3>
-            <p className="small text-secondary mb-0">Article-only extraction. The LLM reads the paper and outputs structured residue-level pocket annotations without geometric analysis.</p>
-          </div>
-        </div>
-      </section>
 
       <div className="row g-3">
         <div className="col-md-6">

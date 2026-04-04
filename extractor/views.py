@@ -52,29 +52,40 @@ def submit_extract(request):
 
 @require_GET
 def job_detail(request, job_id):
-    job = get_object_or_404(ExtractionJob, pk=job_id)
-    return render(request, 'extractor/job.html', {'job': job})
+    get_object_or_404(ExtractionJob, pk=job_id)
+    return render(request, 'extractor/index.html')
 
 
 @require_GET
 def job_status(request, job_id):
     job = get_object_or_404(ExtractionJob, pk=job_id)
+    poll_error = None
 
     if job.status not in ('done', 'failed'):
         try:
             data = services.poll_job(str(job_id))
         except services.PocketExtractorError as e:
-            return render(request, 'extractor/_status.html', {'job': job, 'poll_error': str(e)})
+            poll_error = str(e)
+        else:
+            new_status = data.get('status', job.status)
+            if new_status != job.status:
+                job.status = new_status
+                job.output_path = data.get('result', {}).get('output_path', '') if isinstance(data.get('result'), dict) else ''
+                job.pockets_json = data.get('result')
+                job.error = data.get('error', '')
+                job.save()
 
-        new_status = data.get('status', job.status)
-        if new_status != job.status:
-            job.status = new_status
-            job.output_path = data.get('result', {}).get('output_path', '') if isinstance(data.get('result'), dict) else ''
-            job.pockets_json = data.get('result')
-            job.error = data.get('error', '')
-            job.save()
-
-    return render(request, 'extractor/_status.html', {'job': job})
+    return JsonResponse({
+        'job_id': str(job.job_id),
+        'target': job.target,
+        'article_filename': job.article_filename,
+        'created_at': job.created_at.isoformat(),
+        'status': job.status,
+        'pockets_json': job.pockets_json,
+        'output_path': job.output_path,
+        'error': job.error,
+        'poll_error': poll_error,
+    })
 
 
 def serve_file(request, job_id, file_path):

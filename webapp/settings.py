@@ -70,9 +70,6 @@ if 'test' in sys.argv:
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    ('css', BASE_DIR / 'css'),
-    ('js', BASE_DIR / 'js'),
-    ('assets', BASE_DIR / 'assets'),
     ('react', BASE_DIR / 'react'),
 ]
 STORAGES = {

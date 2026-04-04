@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+import JobDetail from './JobDetail.jsx'
 import './App.css'
 
-function getCsrfToken() {
+export function getCsrfToken() {
   return document.cookie.split('; ')
     .find(r => r.startsWith('csrftoken='))
     ?.split('=')[1] ?? ''
@@ -10,6 +12,7 @@ function getCsrfToken() {
 function PipelineForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -25,7 +28,7 @@ function PipelineForm() {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Submission failed')
-      window.location.href = `/jobs/${json.job_id}/`
+      navigate(`/jobs/${json.job_id}/`)
     } catch (err) {
       setError(err.message)
       setLoading(false)
@@ -120,7 +123,7 @@ function ExtractForm() {
   )
 }
 
-export default function App() {
+function HomePage() {
   return (
     <main>
       <h1>Pocket Extractor</h1>
@@ -129,5 +132,14 @@ export default function App() {
         <ExtractForm />
       </div>
     </main>
+  )
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/jobs/:jobId/" element={<JobDetail />} />
+    </Routes>
   )
 }

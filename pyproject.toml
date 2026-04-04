@@ -9,4 +9,5 @@ dependencies = [
     "gunicorn>=22.0",
     "whitenoise>=6.7",
     "requests>=2.33.1",
+    "djangorestframework>=3.17.1",
 ]

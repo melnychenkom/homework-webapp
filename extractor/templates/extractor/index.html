@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
   <title>Pocket Extractor</title>
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  {% if not vite_dev %}<link rel="stylesheet" href="{% static 'react/main.css' %}">{% endif %}
 </head>
 <body>
   <h1>Pocket Extractor</h1>
@@ -39,6 +41,14 @@
       {% endfor %}
     </ul>
   </section>
+  {% endif %}
+
+  <div id="root"></div>
+  {% if vite_dev %}
+  <script type="module" src="{{ vite_dev_server }}/@vite/client"></script>
+  <script type="module" src="{{ vite_dev_server }}/src/main.jsx"></script>
+  {% else %}
+  <script type="module" src="{% static 'react/main.js' %}"></script>
   {% endif %}
 </body>
 </html>

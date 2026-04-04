@@ -41,6 +41,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'extractor.context_processors.vite',
             ],
         },
     },
@@ -72,6 +73,7 @@ STATICFILES_DIRS = [
     ('css', BASE_DIR / 'css'),
     ('js', BASE_DIR / 'js'),
     ('assets', BASE_DIR / 'assets'),
+    ('react', BASE_DIR / 'react'),
 ]
 STORAGES = {
     'staticfiles': {
@@ -83,3 +85,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LANGGRAPH_URL = os.getenv('LANGGRAPH_URL', 'http://localhost:8000')
 RESULTS_ROOT  = Path(os.getenv('RESULTS_ROOT', BASE_DIR / 'results'))
+
+VITE_DEV_MODE = os.getenv('VITE_DEV', 'false').lower() == 'true'
+VITE_DEV_SERVER = 'http://localhost:5173'

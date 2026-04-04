@@ -5,6 +5,7 @@ node_modules/
 wordpress
 docs/
 .claude/
+react/
 
 # Python cache
 __pycache__/

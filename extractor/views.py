@@ -41,13 +41,24 @@ def submit_pipeline(request):
 def submit_extract(request):
     article_file = request.FILES.get('article_file')
     target = request.POST.get('target', '')
+    kwargs = {k: request.POST[k] for k in
+              ('filter_step', 'refine_step', 'extraction_model', 'filter_model', 'refine_model')
+              if k in request.POST}
 
     try:
-        result = services.submit_extract(article_file, target)
+        job_id_str = services.submit_extract(article_file, target, **kwargs)
     except services.PocketExtractorError as e:
         return JsonResponse({'error': str(e)}, status=502)
 
-    return JsonResponse(result)
+    job_uuid = uuid.UUID(job_id_str)
+    ExtractionJob.objects.create(
+        job_id=job_uuid,
+        target=target,
+        article_filename=article_file.name if article_file else '',
+        status='pending',
+        job_type='extract',
+    )
+    return JsonResponse({'job_id': str(job_uuid)})
 
 
 @require_GET
@@ -63,7 +74,9 @@ def job_status(request, job_id):
 
     if job.status not in ('done', 'failed'):
         try:
-            data = services.poll_job(str(job_id))
+            data = services.poll_job(str(job_id), job_type=job.job_type)
+        except services.PollTimeout:
+            pass  # server busy processing — just return current DB state
         except services.PocketExtractorError as e:
             poll_error = str(e)
         else:

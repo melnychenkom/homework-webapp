@@ -1,24 +1,13 @@
 import { useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import JobDetail from './JobDetail'
+import workflowImg from './assets/workflow.jpg'
 import './App.css'
 
 export function getCsrfToken(): string {
   return document.cookie.split('; ')
     .find(r => r.startsWith('csrftoken='))
     ?.split('=')[1] ?? ''
-}
-
-interface Pocket {
-  id: number
-  score: number
-  residues: string[]
-}
-
-interface ExtractResult {
-  status: string
-  target: string
-  pockets: Pocket[]
 }
 
 const DEFAULT_MODEL = 'google_genai:gemini-2.5-flash'
@@ -64,7 +53,7 @@ function PipelineForm() {
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -115,13 +104,12 @@ function PipelineForm() {
 function ExtractForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<ExtractResult | null>(null)
+  const navigate = useNavigate()
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setResult(null)
 
     const data = new FormData(e.currentTarget)
     try {
@@ -132,10 +120,9 @@ function ExtractForm() {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Extraction failed')
-      setResult(json as ExtractResult)
+      navigate(`/jobs/${json.job_id}/`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
-    } finally {
       setLoading(false)
     }
   }
@@ -156,21 +143,9 @@ function ExtractForm() {
         {error && <p className="error">{error}</p>}
         <AdvancedSettings />
         <button type="submit" disabled={loading}>
-          {loading ? 'Extracting…' : 'Extract'}
+          {loading ? 'Submitting…' : 'Extract'}
         </button>
       </form>
-      {result && (
-        <div className="result">
-          <h3>Result — {result.target}</h3>
-          <ul>
-            {result.pockets.map(p => (
-              <li key={p.id}>
-                Pocket {p.id} — score {p.score} — {p.residues.join(', ')}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   )
 }
@@ -178,7 +153,41 @@ function ExtractForm() {
 function HomePage() {
   return (
     <main>
-      <h1>Pocket Extractor</h1>
+      <header className="hero">
+        <h1>Pocket Extractor</h1>
+        <p className="hero-sub">
+          Literature-driven prioritization of protein binding pockets using LLMs and geometric analysis.
+        </p>
+        <p className="hero-desc">
+          Combines <a href="https://github.com/Discngine/fpocket" target="_blank" rel="noreferrer">fpocket</a> geometric
+          pocket detection with large language models to validate candidate pockets against published experimental data.
+          LLMs extract residue-level binding site annotations from research articles; these are matched to fpocket
+          alpha sphere clusters and used to construct volumetric pocket representations.
+        </p>
+        <p className="hero-cite">
+          Based on:{' '}
+          <a href="https://academic.oup.com/bioinformatics/article/41/8/btaf449/8225722" target="_blank" rel="noreferrer">
+            Leveraging large language models for literature-driven prioritization of protein binding pockets
+          </a>
+          {' '}— <em>Bioinformatics</em>, 2025.
+        </p>
+      </header>
+
+      <figure className="workflow-diagram">
+        <img src={workflowImg} alt="Pocket Extractor workflow diagram" />
+      </figure>
+
+      <section className="workflows">
+        <div className="workflow">
+          <h3>Full Pipeline</h3>
+          <p>Provide a PDB structure and a research article. Runs filter → LLM extraction → geometric mapping → volumetric pocket construction via fpocket.</p>
+        </div>
+        <div className="workflow">
+          <h3>LLM Extraction</h3>
+          <p>Article-only extraction. The LLM reads the paper and outputs structured residue-level pocket annotations without geometric analysis.</p>
+        </div>
+      </section>
+
       <div className="forms">
         <PipelineForm />
         <ExtractForm />

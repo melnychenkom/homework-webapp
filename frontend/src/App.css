@@ -195,3 +195,43 @@ pre {
   overflow-x: auto;
   white-space: pre-wrap;
 }
+
+/* Advanced settings */
+.advanced {
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+}
+
+.advanced summary {
+  font-size: 0.8rem;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.advanced summary::before {
+  content: '▶ ';
+  font-size: 0.65rem;
+}
+
+.advanced[open] summary::before {
+  content: '▼ ';
+}
+
+.advanced-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+select {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  background: #fafafa;
+  width: 100%;
+}

@@ -21,6 +21,44 @@ interface ExtractResult {
   pockets: Pocket[]
 }
 
+const DEFAULT_MODEL = 'google_genai:gemini-2.5-flash'
+
+function AdvancedSettings() {
+  return (
+    <details className="advanced">
+      <summary>Advanced settings</summary>
+      <div className="advanced-fields">
+        <label>
+          Filter step
+          <select name="filter_step" defaultValue="true">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </label>
+        <label>
+          Refine step
+          <select name="refine_step" defaultValue="true">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </label>
+        <label>
+          Extraction model
+          <input type="text" name="extraction_model" defaultValue={DEFAULT_MODEL} />
+        </label>
+        <label>
+          Filter model
+          <input type="text" name="filter_model" defaultValue={DEFAULT_MODEL} />
+        </label>
+        <label>
+          Refine model
+          <input type="text" name="refine_model" defaultValue={DEFAULT_MODEL} />
+        </label>
+      </div>
+    </details>
+  )
+}
+
 function PipelineForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -65,6 +103,7 @@ function PipelineForm() {
           <input type="file" name="article_file" required />
         </label>
         {error && <p className="error">{error}</p>}
+        <AdvancedSettings />
         <button type="submit" disabled={loading}>
           {loading ? 'Submitting…' : 'Submit pipeline'}
         </button>
@@ -115,6 +154,7 @@ function ExtractForm() {
           <input type="file" name="article_file" required />
         </label>
         {error && <p className="error">{error}</p>}
+        <AdvancedSettings />
         <button type="submit" disabled={loading}>
           {loading ? 'Extracting…' : 'Extract'}
         </button>

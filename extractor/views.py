@@ -64,6 +64,21 @@ def submit_extract(request):
 
 
 @require_GET
+def jobs_list(request):
+    jobs = ExtractionJob.objects.order_by('-created_at')[:10]
+    return JsonResponse({'jobs': [
+        {
+            'job_id': str(j.job_id),
+            'target': j.target,
+            'job_type': j.job_type,
+            'status': j.status,
+            'created_at': j.created_at.isoformat(),
+        }
+        for j in jobs
+    ]})
+
+
+@require_GET
 def job_detail(request, job_id):
     get_object_or_404(ExtractionJob, pk=job_id)
     return render(request, 'extractor/index.html')
@@ -94,6 +109,7 @@ def job_status(request, job_id):
         'job_id': str(job.job_id),
         'target': job.target,
         'article_filename': job.article_filename,
+        'job_type': job.job_type,
         'created_at': job.created_at.isoformat(),
         'status': job.status,
         'pockets_json': job.pockets_json,

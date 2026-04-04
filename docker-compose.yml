@@ -1,0 +1,25 @@
+volumes:
+  pocket_output:
+
+services:
+  langgraph:
+    build: ../../pocket-extractor
+    env_file: ../../pocket-extractor/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - pocket_output:/app/output
+
+  django:
+    build: .
+    env_file: .env
+    environment:
+      OUTPUT_DIR: /app/output
+      PYTHONUNBUFFERED: "1"
+      LANGGRAPH_URL: http://langgraph:8000
+    ports:
+      - "8080:8000"
+    volumes:
+      - pocket_output:/app/output
+      - .:/app:z
+    command: ["sh", "-c", "python manage.py migrate && python manage.py runserver --noreload 0.0.0.0:8000"]

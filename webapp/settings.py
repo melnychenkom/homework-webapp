@@ -31,7 +31,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'blast.urls'
+ROOT_URLCONF = 'webapp.urls'
 
 TEMPLATES = [
     {
@@ -46,7 +46,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blast.wsgi.application'
+WSGI_APPLICATION = 'webapp.wsgi.application'
 
 DATABASES = {
     'default': {

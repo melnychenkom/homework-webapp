@@ -1,318 +1,50 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Brand colour */
+:root {
+  --bs-primary: #2563eb;
+  --bs-primary-rgb: 37, 99, 235;
+  --bs-link-color: #2563eb;
+  --bs-link-hover-color: #1d4ed8;
+  --bs-btn-bg: #2563eb;
+  --bs-btn-border-color: #2563eb;
+  --bs-btn-hover-bg: #1d4ed8;
+  --bs-btn-hover-border-color: #1d4ed8;
 }
 
-body {
-  font-family: system-ui, sans-serif;
-  background: #f5f5f5;
-  color: #1a1a1a;
-  min-height: 100vh;
-}
+body { background: #f5f5f5; }
 
-main {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-}
-
-h1 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-/* Hero / description */
-.hero {
-  margin-bottom: 2rem;
-}
-
-.hero-sub {
-  font-size: 1rem;
-  color: #444;
-  margin-bottom: 0.75rem;
-}
-
-.hero-desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 0.6rem;
-  max-width: 680px;
-}
-
-.hero-desc a,
-.hero-cite a {
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.hero-desc a:hover,
-.hero-cite a:hover {
-  text-decoration: underline;
-}
-
-.hero-cite {
-  font-size: 0.82rem;
-  color: #777;
-}
+/* Hero */
+.hero { margin-bottom: 2rem; }
+.hero-desc { max-width: 680px; }
+.hero-cite { font-size: 0.82rem; }
 
 /* Workflow diagram */
-.workflow-diagram {
-  margin: 0 0 1.75rem;
-}
-
+.workflow-diagram { margin: 0 0 1.75rem; }
 .workflow-diagram img {
   width: 100%;
   max-width: 820px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border-radius: .5rem;
+  border: 1px solid var(--bs-border-color);
   display: block;
 }
 
-/* Workflow summary cards */
-.workflows {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 600px) {
-  .workflows { grid-template-columns: 1fr; }
-}
-
-.workflow {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.workflow h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.workflow p {
-  font-size: 0.83rem;
-  color: #555;
-  line-height: 1.5;
-}
-
-.forms {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-@media (max-width: 600px) {
-  .forms { grid-template-columns: 1fr; }
-}
-
-.card {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.card h2 {
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.card-desc {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: -0.5rem;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-input[type="text"],
-input[type="file"] {
-  padding: 0.45rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 0.875rem;
-  background: #fafafa;
-  width: 100%;
-}
-
-input[type="text"]:focus {
-  outline: 2px solid #2563eb;
-  outline-offset: 1px;
-  border-color: transparent;
-}
-
-button[type="submit"] {
-  margin-top: 0.25rem;
-  padding: 0.55rem 1rem;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  align-self: flex-start;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background: #1d4ed8;
-}
-
-button[type="submit"]:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error {
-  font-size: 0.85rem;
-  color: #dc2626;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 5px;
-  padding: 0.5rem 0.75rem;
-}
-
-.result {
-  border-top: 1px solid #e0e0e0;
-  padding-top: 1rem;
-}
-
-.result h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.result ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.result li {
-  font-size: 0.85rem;
-  color: #444;
-  padding: 0.3rem 0.5rem;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-/* Job detail page */
-.back-link {
-  display: inline-block;
-  margin-bottom: 1.25rem;
-  font-size: 0.875rem;
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.back-link:hover { text-decoration: underline; }
-
-.job-card {
-  max-width: 600px;
-}
-
-.job-meta h1 {
-  font-size: 1.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.muted {
-  font-size: 0.85rem;
-  color: #888;
-}
-
-.status-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.status {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.status--pending  { background: #fef9c3; color: #854d0e; }
-.status--running  { background: #dbeafe; color: #1e40af; }
-.status--done     { background: #dcfce7; color: #166534; }
-.status--failed   { background: #fee2e2; color: #991b1b; }
-
-pre {
-  font-size: 0.8rem;
-  background: #f5f5f5;
-  border-radius: 5px;
-  padding: 0.75rem;
-  overflow-x: auto;
-  white-space: pre-wrap;
-}
-
-/* Advanced settings */
+/* Advanced settings (details/summary — no Bootstrap equivalent) */
 .advanced {
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
-  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .375rem;
+  padding: .5rem .75rem;
 }
-
 .advanced summary {
-  font-size: 0.8rem;
+  font-size: .8rem;
   color: #666;
   cursor: pointer;
   user-select: none;
   list-style: none;
 }
-
-.advanced summary::before {
-  content: '▶ ';
-  font-size: 0.65rem;
-}
-
-.advanced[open] summary::before {
-  content: '▼ ';
-}
-
+.advanced summary::before { content: '▶ '; font-size: .65rem; }
+.advanced[open] summary::before { content: '▼ '; }
 .advanced-fields {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 0.75rem;
-}
-
-select {
-  padding: 0.45rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 0.875rem;
-  background: #fafafa;
-  width: 100%;
+  gap: .6rem;
+  margin-top: .75rem;
 }

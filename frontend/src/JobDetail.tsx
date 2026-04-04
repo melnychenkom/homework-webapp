@@ -7,6 +7,13 @@ type JobStatus = 'pending' | 'running' | 'done' | 'failed'
 
 const TERMINAL: JobStatus[] = ['done', 'failed']
 
+const STATUS_CLASS: Record<JobStatus, string> = {
+  pending: 'badge text-bg-warning',
+  running: 'badge text-bg-primary',
+  done:    'badge text-bg-success',
+  failed:  'badge text-bg-danger',
+}
+
 interface Job {
   job_id: string
   target: string
@@ -47,35 +54,37 @@ export default function JobDetail() {
   }, [jobId])
 
   return (
-    <main>
-      <Link to="/" className="back-link">← New job</Link>
-      <div className="card job-card">
-        {error && <p className="error">{error}</p>}
-        {!job && !error && <p className="muted">Loading…</p>}
-        {job && (
-          <>
-            <div className="job-meta">
-              <h1>{job.target}</h1>
-              <p className="muted">{job.article_filename} · submitted {new Date(job.created_at).toLocaleString()}</p>
-            </div>
-            <div className="status-row">
-              <span className={`status status--${job.status}`}>{job.status}</span>
-              {!TERMINAL.includes(job.status) && <span className="muted">Polling every 5s…</span>}
-            </div>
-            {job.poll_error && (
-              <p className="error">Warning: {job.poll_error}</p>
-            )}
-            {job.status === 'done' && job.pockets_json && (
-              <div className="result">
-                <h3>Pockets</h3>
-                <pre>{JSON.stringify(job.pockets_json, null, 2)}</pre>
+    <main className="container py-4">
+      <Link to="/" className="d-inline-block mb-3 small text-decoration-none">← New job</Link>
+      <div className="card" style={{ maxWidth: 640 }}>
+        <div className="card-body d-flex flex-column gap-3">
+          {error && <div className="alert alert-danger py-2 px-3 small mb-0">{error}</div>}
+          {!job && !error && <p className="text-muted small mb-0">Loading…</p>}
+          {job && (
+            <>
+              <div>
+                <h1 className="h5 mb-1">{job.target}</h1>
+                <p className="text-muted small mb-0">{job.article_filename} · submitted {new Date(job.created_at).toLocaleString()}</p>
               </div>
-            )}
-            {job.status === 'failed' && job.error && (
-              <p className="error">{job.error}</p>
-            )}
-          </>
-        )}
+              <div className="d-flex align-items-center gap-2">
+                <span className={STATUS_CLASS[job.status]}>{job.status}</span>
+                {!TERMINAL.includes(job.status) && <span className="text-muted small">Polling every 5s…</span>}
+              </div>
+              {job.poll_error && (
+                <div className="alert alert-warning py-2 px-3 small mb-0">Warning: {job.poll_error}</div>
+              )}
+              {job.status === 'done' && job.pockets_json && (
+                <div className="border-top pt-3">
+                  <h3 className="small fw-semibold mb-2">Pockets</h3>
+                  <pre className="small bg-light p-3 rounded">{JSON.stringify(job.pockets_json, null, 2)}</pre>
+                </div>
+              )}
+              {job.status === 'failed' && job.error && (
+                <div className="alert alert-danger py-2 px-3 small mb-0">{job.error}</div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   )

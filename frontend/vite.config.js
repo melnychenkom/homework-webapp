@@ -9,7 +9,7 @@ export default defineConfig({
     cors: true,
   },
   build: {
-    outDir: '../django-app/react',
+    outDir: '../react',
     emptyOutDir: true,
     rollupOptions: {
       output: {

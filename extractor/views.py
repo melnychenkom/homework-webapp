@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.http import FileResponse, Http404, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
 
 from . import services
@@ -34,7 +34,7 @@ def submit_pipeline(request):
         article_filename=article_filename,
         status='pending',
     )
-    return redirect('job_detail', job_id=job_uuid)
+    return JsonResponse({'job_id': str(job_uuid)})
 
 
 @require_POST
@@ -47,7 +47,7 @@ def submit_extract(request):
     except services.PocketExtractorError as e:
         return JsonResponse({'error': str(e)}, status=502)
 
-    return render(request, 'extractor/index.html', {'extract_result': result})
+    return JsonResponse(result)
 
 
 @require_GET

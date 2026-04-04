@@ -5,3 +5,5 @@ test_db.sqlite3
 staticfiles/
 *.env
 .claude/
+frontend/node_modules/
+node_modules/

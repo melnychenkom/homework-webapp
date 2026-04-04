@@ -1,6 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Clipboard, ClipboardCheck, FileJson, FileCode2 } from 'lucide-react'
+import type { JobFiles } from './MolstarViewer'
+
+const MolstarViewer = lazy(() => import('./MolstarViewer'))
 
 const POLL_INTERVAL = 5000
 
@@ -144,6 +147,16 @@ export default function JobDetail() {
   const [job, setJob] = useState<Job | null>(null)
   const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [viewerFiles, setViewerFiles] = useState<JobFiles | null>(null)
+
+  useEffect(() => {
+    if (job?.status === 'done' && job.job_type !== 'extract' && !viewerFiles) {
+      fetch(`/jobs/${jobId}/files/`)
+        .then(r => r.ok ? r.json() as Promise<JobFiles> : null)
+        .then(data => { if (data) setViewerFiles(data) })
+        .catch(() => {})
+    }
+  }, [job?.status, job?.job_type])
 
   async function fetchStatus() {
     try {
@@ -182,7 +195,7 @@ export default function JobDetail() {
           {job.status === 'done' && pockets.length > 0 && (
             <>
               <h2 className="fs-6 fw-semibold mb-2">Pockets ({pockets.length})</h2>
-              <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-column gap-2 mb-3">
                 {pockets.map(pocket => (
                   <PocketCard key={pocket.pocket_id} pocket={pocket} />
                 ))}
@@ -191,6 +204,12 @@ export default function JobDetail() {
           )}
           {job.status === 'done' && pockets.length === 0 && (
             <p className="text-muted small">No pockets found.</p>
+          )}
+
+          {viewerFiles && (
+            <Suspense fallback={<p className="text-muted small">Loading viewer…</p>}>
+              <MolstarViewer jobId={jobId!} files={viewerFiles} height={520} />
+            </Suspense>
           )}
         </>
       )}

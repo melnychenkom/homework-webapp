@@ -8,6 +8,9 @@ export default defineConfig(({ command }) => ({
   server: {
     cors: true,
   },
+  optimizeDeps: {
+    exclude: ['molstar'],
+  },
   build: {
     outDir: '../react',
     emptyOutDir: true,
@@ -15,6 +18,9 @@ export default defineConfig(({ command }) => ({
       output: {
         entryFileNames: 'main.js',
         assetFileNames: (info) => info.name?.endsWith('.css') ? 'main.css' : 'assets/[name]-[hash][extname]',
+        manualChunks: (id) => {
+          if (id.includes('node_modules/molstar/')) return 'molstar'
+        },
       },
     },
   },

@@ -9,5 +9,6 @@ urlpatterns = [
     path('jobs/',                                         views.jobs_list,       name='jobs_list'),
     path('jobs/<uuid:job_id>/',                           views.job_detail,      name='job_detail'),
     path('jobs/<uuid:job_id>/status/',                    views.job_status,      name='job_status'),
+    path('jobs/<uuid:job_id>/files/',                     views.job_files,       name='job_files'),
     path('jobs/<uuid:job_id>/files/<path:file_path>/',    views.serve_file,      name='serve_file'),
 ]

@@ -1,3 +1,4 @@
+import json
 import uuid
 from pathlib import Path
 
@@ -116,6 +117,34 @@ def job_status(request, job_id):
         'output_path': job.output_path,
         'error': job.error,
         'poll_error': poll_error,
+    })
+
+
+@require_GET
+def job_files(request, job_id):
+    job = get_object_or_404(ExtractionJob, pk=job_id)
+    if job.status != 'done':
+        return JsonResponse({'error': 'Job not complete'}, status=404)
+    results_root = Path(settings.RESULTS_ROOT)
+    job_dir = results_root / 'jobs' / str(job_id)
+    if not job_dir.exists():
+        return JsonResponse({'error': 'Job directory not found'}, status=404)
+
+    protein_pdbs = [p.name for p in sorted(job_dir.glob('*.pdb'))]
+    pockets_dir = job_dir / 'pockets'
+    residues_dir = job_dir / 'residues'
+
+    mapping = None
+    mapping_path = job_dir / 'mapping.json'
+    if mapping_path.exists():
+        with mapping_path.open() as f:
+            mapping = json.load(f)
+
+    return JsonResponse({
+        'protein_pdb': protein_pdbs[0] if protein_pdbs else None,
+        'pocket_mol2s': sorted(f'pockets/{p.name}' for p in pockets_dir.glob('*.mol2')) if pockets_dir.exists() else [],
+        'residue_pdbs': sorted(f'residues/{p.name}' for p in residues_dir.glob('*.pdb')) if residues_dir.exists() else [],
+        'mapping': mapping,
     })
 
 

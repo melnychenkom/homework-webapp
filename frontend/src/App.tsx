@@ -70,6 +70,7 @@ function RecentJobs({ refreshKey }: { refreshKey: number }) {
 function UploadForm({ onSuccess }: { onSuccess: () => void }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [mode, setMode] = useState<'file' | 'text'>('file')
   const navigate = useNavigate()
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -97,16 +98,32 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <div className="card p-3">
       <h2 className="fs-6 fw-semibold mb-1">Phylogenetic Analysis</h2>
-      <p className="small text-secondary mb-2">Upload a FASTA file containing DNA sequences to align and build a phylogenetic tree.</p>
+      <p className="small text-secondary mb-2">Upload a FASTA file or paste sequences to align and build a phylogenetic tree.</p>
       <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
         <label className="form-label fw-medium small mb-0">
           Analysis name
           <input type="text" name="name" required className="form-control form-control-sm" />
         </label>
-        <label className="form-label fw-medium small mb-0">
-          FASTA file
-          <input type="file" name="fasta_file" accept=".fasta,.fa,.fna" required className="form-control form-control-sm" />
-        </label>
+        <div>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <span className="fw-medium small">Sequences</span>
+            <div className="btn-group btn-group-sm ms-auto" role="group">
+              <button type="button" className={`btn btn-outline-secondary${mode === 'file' ? ' active' : ''}`} onClick={() => setMode('file')}>File</button>
+              <button type="button" className={`btn btn-outline-secondary${mode === 'text' ? ' active' : ''}`} onClick={() => setMode('text')}>Text</button>
+            </div>
+          </div>
+          {mode === 'file' ? (
+            <input type="file" name="fasta_file" accept=".fasta,.fa,.fna,.txt" className="form-control form-control-sm" />
+          ) : (
+            <textarea
+              name="fasta_text"
+              rows={6}
+              placeholder={'>seq1\nATCGATCG...\n>seq2\nATCGATCG...'}
+              className="form-control form-control-sm font-monospace"
+              style={{ fontSize: '0.75rem' }}
+            />
+          )}
+        </div>
         {error && <div className="alert alert-danger py-2 px-3 small mb-0">{error}</div>}
         <button type="submit" disabled={loading} className="btn btn-primary btn-sm align-self-start">
           {loading ? 'Uploading…' : 'Analyse'}

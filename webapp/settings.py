@@ -3,84 +3,88 @@ from dotenv import load_dotenv
 import os
 import sys
 import pymysql
-pymysql.version_info = (2, 2, 1, 'final', 0)
+
+pymysql.version_info = (2, 2, 1, "final", 0)
 pymysql.install_as_MySQLdb()
 
 # Patch Django's MySQL version check to allow MySQL 5.7
 import django.db.backends.mysql.base as _mysql_base
+
 _mysql_base.DatabaseWrapper.mysql_version = property(lambda self: (8, 0, 11))
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-prod')
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["group3.gcs-camp-conference.org", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["group3.gcs-camp-conference.org"]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
-    'django.contrib.contenttypes',
-    'django.contrib.staticfiles',
-    'aligner',
+    "django.contrib.contenttypes",
+    "django.contrib.staticfiles",
+    "aligner",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
-ROOT_URLCONF = 'webapp.urls'
+ROOT_URLCONF = "webapp.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'aligner.context_processors.vite',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "aligner.context_processors.vite",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'webapp.wsgi.application'
+WSGI_APPLICATION = "webapp.wsgi.application"
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': os.getenv('DB_HOST'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'OPTIONS': {'charset': 'utf8mb4'},
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "HOST": os.getenv("DB_HOST"),
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASS"),
+        "OPTIONS": {"charset": "utf8mb4"},
     }
 }
 
 # Use SQLite when running tests (avoids needing CREATE DATABASE on remote MySQL)
-if 'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'test_db.sqlite3',
+if "test" in sys.argv:
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "test_db.sqlite3",
     }
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    ('react', BASE_DIR / 'react'),
+    ("react", BASE_DIR / "react"),
 ]
 STORAGES = {
-    'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-RESULTS_ROOT = Path(os.getenv('RESULTS_ROOT', BASE_DIR / 'results'))
+RESULTS_ROOT = Path(os.getenv("RESULTS_ROOT", BASE_DIR / "results"))
 
-VITE_DEV_MODE = os.getenv('VITE_DEV', 'false').lower() == 'true'
-VITE_DEV_SERVER = 'http://localhost:5173'
+VITE_DEV_MODE = os.getenv("VITE_DEV", "false").lower() == "true"
+VITE_DEV_SERVER = "http://localhost:5173"

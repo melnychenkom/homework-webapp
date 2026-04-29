@@ -21,7 +21,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    'extractor',
+    'aligner',
 ]
 
 MIDDLEWARE = [
@@ -41,7 +41,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
-                'extractor.context_processors.vite',
+                'aligner.context_processors.vite',
             ],
         },
     },
@@ -80,8 +80,7 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LANGGRAPH_URL = os.getenv('LANGGRAPH_URL', 'http://localhost:8000')
-RESULTS_ROOT  = Path(os.getenv('RESULTS_ROOT', BASE_DIR / 'results'))
+RESULTS_ROOT = Path(os.getenv('RESULTS_ROOT', BASE_DIR / 'results'))
 
 VITE_DEV_MODE = os.getenv('VITE_DEV', 'false').lower() == 'true'
 VITE_DEV_SERVER = 'http://localhost:5173'

@@ -1,5 +1,5 @@
 [project]
-name = "blast-webapp"
+name = "phylo-webapp"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
@@ -8,6 +8,4 @@ dependencies = [
     "python-dotenv>=1.0",
     "gunicorn>=22.0",
     "whitenoise>=6.7",
-    "requests>=2.33.1",
-    "djangorestframework>=3.17.1",
 ]

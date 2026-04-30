@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, type JSX } from "react";
 import { useParams, Link } from "react-router-dom";
+import PhyloTreeView, { type Trees } from "./PhyloTreeView";
 
 const POLL_INTERVAL = 5000;
 const BLOCK = 10;
@@ -26,6 +27,7 @@ interface Results {
   sequences: AlignedSeq[];
   alignment_length: number;
   sequence_count: number;
+  trees?: Trees | null;
 }
 
 interface Job {
@@ -173,7 +175,12 @@ export default function JobDetail() {
         <>
           <RunInfoCard job={job} jobId={jobId!} />
           {job.status === "done" && job.results_json && (
-            <AlignmentView results={job.results_json} />
+            <>
+              <AlignmentView results={job.results_json} />
+              {job.results_json.trees && (
+                <PhyloTreeView trees={job.results_json.trees} />
+              )}
+            </>
           )}
         </>
       )}

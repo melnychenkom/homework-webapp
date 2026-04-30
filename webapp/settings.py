@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 DEBUG = True
 ALLOWED_HOSTS = ["group3.gcs-camp-conference.org", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["group3.gcs-camp-conference.org"]
+CSRF_TRUSTED_ORIGINS = ["https://group3.gcs-camp-conference.org"]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [

@@ -55,7 +55,11 @@ def _ml_tree(alignment: Alignment, seq_ids: list[str]) -> str | None:
         if result.returncode != 0:
             logger.warning('FastTree non-zero exit: %s', result.stderr[:200])
             return None
-        return result.stdout.strip() or None
+        newick = result.stdout.strip()
+        if not newick or not newick.endswith(';'):
+            logger.warning('FastTree produced unexpected output')
+            return None
+        return newick
     except FileNotFoundError:
         logger.warning('FastTree binary not found; ML tree skipped')
         return None
@@ -80,8 +84,16 @@ def build_trees(alignment: Alignment, seq_ids: list[str]) -> dict[str, str | Non
     dm = DistanceMatrix(seq_ids, lower_tri)
     constructor = DistanceTreeConstructor()
 
-    return {
-        "nj": _tree_to_newick(constructor.nj(dm)),
-        "upgma": _tree_to_newick(constructor.upgma(dm)),
-        "ml": _ml_tree(alignment, seq_ids),
-    }
+    nj_newick = None
+    try:
+        nj_newick = _tree_to_newick(constructor.nj(dm))
+    except Exception as exc:
+        logger.warning("NJ tree failed: %s", exc)
+
+    upgma_newick = None
+    try:
+        upgma_newick = _tree_to_newick(constructor.upgma(dm))
+    except Exception as exc:
+        logger.warning("UPGMA tree failed: %s", exc)
+
+    return {"nj": nj_newick, "upgma": upgma_newick, "ml": _ml_tree(alignment, seq_ids)}

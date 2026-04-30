@@ -200,3 +200,4 @@ class PipelineTreeIntegrationTest(TestCase):
         trees = job.results_json['trees']
         self.assertIsNotNone(trees['nj'])
         self.assertIsNotNone(trees['upgma'])
+        self.assertIn('ml', trees)  # key must exist even if FastTree not installed

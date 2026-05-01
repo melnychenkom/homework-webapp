@@ -7,6 +7,7 @@ services:
     ports:
       - "8080:8000"
     volumes:
-      - ./extractor:/app/extractor:z
+      - ./aligner:/app/aligner:z
       - ./webapp:/app/webapp:z
+      - ./results:/app/results:z
     command: ["sh", "-c", "python manage.py migrate && python manage.py runserver --noreload 0.0.0.0:8000"]

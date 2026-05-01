@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 test_db.sqlite3
 staticfiles/
+react/
 *.env
 .claude/
 frontend/node_modules/

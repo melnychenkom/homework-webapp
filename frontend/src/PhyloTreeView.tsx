@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore – phylocanvas.gl ships CJS without bundled types
-import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
+import { useState, useMemo } from "react";
+import Tree from "react-d3-tree";
+import type { RawNodeDatum } from "react-d3-tree";
 
 export interface Trees {
   nj: string | null;
@@ -10,34 +9,54 @@ export interface Trees {
 }
 
 type Method = "nj" | "upgma" | "ml";
-type Layout = "rc" | "cr";
+type Orientation = "horizontal" | "vertical";
 
 const METHOD_LABELS: Record<Method, string> = { nj: "NJ", upgma: "UPGMA", ml: "ML" };
 
+function parseNewick(s: string): RawNodeDatum {
+  let pos = 0;
+  const str = s.trim().replace(/;$/, "");
+
+  function parseNode(): RawNodeDatum {
+    const children: RawNodeDatum[] = [];
+    if (str[pos] === "(") {
+      pos++;
+      do {
+        children.push(parseNode());
+      } while (str[pos] === "," && ++pos);
+      pos++; // skip )
+    }
+    const nameStart = pos;
+    while (pos < str.length && !"(),:;".includes(str[pos])) pos++;
+    const name = str.slice(nameStart, pos);
+    const node: RawNodeDatum = { name, ...(children.length ? { children } : {}) };
+    if (str[pos] === ":") {
+      pos++;
+      const lenStart = pos;
+      while (pos < str.length && !"(),;".includes(str[pos])) pos++;
+      const len = parseFloat(str.slice(lenStart, pos));
+      if (!isNaN(len)) node.attributes = { length: len.toFixed(4) };
+    }
+    return node;
+  }
+
+  return parseNode();
+}
+
 export default function PhyloTreeView({ trees }: { trees: Trees }) {
   const [method, setMethod] = useState<Method>("nj");
-  const [layout, setLayout] = useState<Layout>("rc");
-  const containerRef = useRef<HTMLDivElement>(null);
-  const treeRef = useRef<ReturnType<typeof PhylocanvasGL> | null>(null);
+  const [orientation, setOrientation] = useState<Orientation>("horizontal");
 
   const newick = trees[method];
 
-  useEffect(() => {
-    if (!containerRef.current || !newick) return;
-    treeRef.current?.destroy();
-    treeRef.current = new PhylocanvasGL(containerRef.current, {
-      source: newick,
-      size: {
-        width: containerRef.current.getBoundingClientRect().width || 800,
-        height: 420,
-      },
-      type: layout,
-    });
-    return () => {
-      treeRef.current?.destroy();
-      treeRef.current = null;
-    };
-  }, [newick, layout]);
+  const treeData = useMemo(() => {
+    if (!newick) return null;
+    try {
+      return parseNewick(newick);
+    } catch {
+      return null;
+    }
+  }, [newick]);
 
   const downloadHref = newick
     ? `data:text/plain;charset=utf-8,${encodeURIComponent(newick)}`
@@ -49,13 +68,13 @@ export default function PhyloTreeView({ trees }: { trees: Trees }) {
         <h2 className="fs-6 fw-semibold mb-0">Phylogenetic tree</h2>
         <div className="d-flex gap-2 align-items-center">
           <div className="btn-group btn-group-sm">
-            {(["rc", "cr"] as Layout[]).map((l) => (
+            {(["horizontal", "vertical"] as Orientation[]).map((o) => (
               <button
-                key={l}
-                className={`btn btn-outline-secondary${layout === l ? " active" : ""}`}
-                onClick={() => setLayout(l)}
+                key={o}
+                className={`btn btn-outline-secondary${orientation === o ? " active" : ""}`}
+                onClick={() => setOrientation(o)}
               >
-                {l === "rc" ? "Rectangular" : "Circular"}
+                {o === "horizontal" ? "Horizontal" : "Vertical"}
               </button>
             ))}
           </div>
@@ -84,8 +103,17 @@ export default function PhyloTreeView({ trees }: { trees: Trees }) {
         ))}
       </ul>
 
-      {newick ? (
-        <div ref={containerRef} style={{ width: "100%", height: "420px" }} />
+      {treeData ? (
+        <div style={{ width: "100%", height: "420px" }}>
+          <Tree
+            data={treeData}
+            orientation={orientation}
+            translate={orientation === "horizontal" ? { x: 80, y: 210 } : { x: 400, y: 40 }}
+            pathFunc="step"
+            zoom={0.8}
+            initialDepth={Infinity}
+          />
+        </div>
       ) : (
         <p className="text-muted small mb-0">Not available</p>
       )}

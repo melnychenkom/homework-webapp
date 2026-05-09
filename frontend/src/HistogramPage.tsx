@@ -23,7 +23,9 @@ p <- ggplot(df, aes(x=length)) +
      geom_histogram(binwidth=5, fill="steelblue", color="white") +
      labs(title="Sequence Length Distribution", x="Length (bp)", y="Count") +
      theme_minimal()
-ggsave(svg_path, p, width=6, height=4)
+svg(svg_path, width=6, height=4)
+print(p)
+dev.off()
 
 svg_content <- readChar(svg_path, file.info(svg_path)$size)
 

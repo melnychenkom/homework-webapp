@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import JobDetail from './JobDetail'
+import HistogramPage from './HistogramPage'
 import './App.css'
 
 export function getCsrfToken(): string {
@@ -154,9 +155,18 @@ function HomePage() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/jobs/:jobId/" element={<JobDetail />} />
-    </Routes>
+    <>
+      <nav className="navbar navbar-expand navbar-dark bg-dark px-3 py-2">
+        <Link className="navbar-brand small fw-semibold" to="/">DNA Phylogenetics</Link>
+        <div className="navbar-nav ms-auto">
+          <Link className="nav-link small" to="/histogram">Histogram</Link>
+        </div>
+      </nav>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/jobs/:jobId/" element={<JobDetail />} />
+        <Route path="/histogram" element={<HistogramPage />} />
+      </Routes>
+    </>
   )
 }

@@ -45,7 +45,7 @@ interface HistogramData {
 
 export default function HistogramPage() {
   const [data, setData] = useState<HistogramData | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   async function fetchData() {
@@ -87,7 +87,7 @@ export default function HistogramPage() {
           <span className="small fw-semibold">R Code</span>
           <button
             className="btn btn-outline-secondary btn-sm"
-            onClick={() => void navigator.clipboard.writeText(R_CODE)}
+            onClick={() => void navigator.clipboard.writeText(R_CODE).catch(() => {})}
           >
             Copy
           </button>
@@ -102,7 +102,11 @@ export default function HistogramPage() {
         <>
           <div className="card mb-4 p-3">
             <h2 className="fs-6 fw-semibold mb-3">Histogram</h2>
-            <div dangerouslySetInnerHTML={{ __html: data.plot_svg }} />
+            <img
+              src={`data:image/svg+xml,${encodeURIComponent(data.plot_svg)}`}
+              alt="Sequence Length Histogram"
+              className="img-fluid"
+            />
           </div>
 
           <div className="card p-3">

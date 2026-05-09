@@ -3,6 +3,8 @@ import tempfile
 from io import StringIO
 import os
 from unittest.mock import patch
+import json as json_module
+import subprocess
 
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
@@ -201,3 +203,36 @@ class PipelineTreeIntegrationTest(TestCase):
         self.assertIsNotNone(trees['nj'])
         self.assertIsNotNone(trees['upgma'])
         self.assertIn('ml', trees)  # key must exist even if FastTree not installed
+
+
+class RunHistogramTest(TestCase):
+    @patch('aligner.pipeline.histogram.subprocess.run')
+    def test_returns_sequences_and_plot_svg(self, mock_run):
+        from aligner.pipeline.histogram import run_histogram
+        payload = {
+            'sequences': [{'id': 'seq1', 'length': 25, 'sequence': 'ATCG'}],
+            'plot_svg': '<svg></svg>',
+        }
+        mock_run.return_value.returncode = 0
+        mock_run.return_value.stdout = json_module.dumps(payload)
+        result = run_histogram()
+        self.assertEqual(result['sequences'], payload['sequences'])
+        self.assertEqual(result['plot_svg'], payload['plot_svg'])
+
+    @patch('aligner.pipeline.histogram.subprocess.run')
+    def test_raises_on_nonzero_exit(self, mock_run):
+        from aligner.pipeline.histogram import run_histogram
+        mock_run.return_value.returncode = 1
+        mock_run.return_value.stdout = ''
+        mock_run.return_value.stderr = 'Error: package not found'
+        with self.assertRaises(RuntimeError) as ctx:
+            run_histogram()
+        self.assertIn('R execution failed', str(ctx.exception))
+
+    @patch('aligner.pipeline.histogram.subprocess.run',
+           side_effect=subprocess.TimeoutExpired('Rscript', 30))
+    def test_raises_on_timeout(self, mock_run):
+        from aligner.pipeline.histogram import run_histogram
+        with self.assertRaises(RuntimeError) as ctx:
+            run_histogram()
+        self.assertIn('timed out', str(ctx.exception))

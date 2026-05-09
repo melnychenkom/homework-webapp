@@ -1,39 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-const R_CODE = `suppressMessages(library(ggplot2))
-suppressMessages(library(jsonlite))
-
-nucleotides <- c("A","T","G","C")
-lengths     <- sample(20:80, 50, replace=TRUE)
-sequences   <- sapply(lengths, function(l)
-                  paste(sample(nucleotides, l, replace=TRUE), collapse=""))
-
-df <- data.frame(
-  id       = paste0("seq", seq_along(lengths)),
-  length   = lengths,
-  sequence = sequences,
-  stringsAsFactors = FALSE
-)
-
-svg_path <- tempfile(fileext=".svg")
-on.exit(unlink(svg_path))
-
-p <- ggplot(df, aes(x=length)) +
-     geom_histogram(binwidth=5, fill="steelblue", color="white") +
-     labs(title="Sequence Length Distribution", x="Length (bp)", y="Count") +
-     theme_minimal()
-svg(svg_path, width=6, height=4)
-print(p)
-invisible(dev.off())
-
-svg_content <- readChar(svg_path, file.info(svg_path)$size)
-
-cat(toJSON(list(
-  sequences = df,
-  plot_svg  = svg_content
-), auto_unbox=TRUE, dataframe="rows"))`
-
 interface Sequence {
   id: string
   length: number
@@ -43,6 +10,7 @@ interface Sequence {
 interface HistogramData {
   sequences: Sequence[]
   plot_svg: string
+  r_code: string
 }
 
 export default function HistogramPage() {
@@ -89,7 +57,7 @@ export default function HistogramPage() {
           <span className="small fw-semibold">R Code</span>
           <button
             className="btn btn-outline-secondary btn-sm"
-            onClick={() => void navigator.clipboard.writeText(R_CODE).catch(() => {})}
+            onClick={() => void navigator.clipboard.writeText(data?.r_code ?? '').catch(() => {})}
           >
             Copy
           </button>
@@ -97,7 +65,7 @@ export default function HistogramPage() {
         <pre
           className="card-body font-monospace small mb-0"
           style={{ overflowX: 'auto', whiteSpace: 'pre', maxHeight: '400px', overflowY: 'auto' }}
-        >{R_CODE}</pre>
+        >{data?.r_code ?? ''}</pre>
       </div>
 
       {data && (

@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .models import AnalysisJob
 from .pipeline import run_pipeline
+from .pipeline.histogram import run_histogram
 
 
 @require_GET
@@ -104,3 +105,12 @@ def serve_file(request, job_id, file_path):
         raise Http404
 
     return FileResponse(open(target, "rb"))
+
+
+@require_GET
+def histogram_data(request):
+    try:
+        data = run_histogram()
+        return JsonResponse(data)
+    except Exception as exc:
+        return JsonResponse({"error": str(exc)}, status=500)

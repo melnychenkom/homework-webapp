@@ -245,3 +245,27 @@ class RunHistogramTest(TestCase):
         with self.assertRaises(RuntimeError) as ctx:
             run_histogram()
         self.assertIn('invalid JSON', str(ctx.exception))
+
+
+class HistogramDataViewTest(TestCase):
+    @patch('aligner.views.run_histogram')
+    def test_returns_json_on_success(self, mock_hist):
+        mock_hist.return_value = {
+            'sequences': [{'id': 'seq1', 'length': 30, 'sequence': 'ATCG'}],
+            'plot_svg': '<svg></svg>',
+        }
+        client = Client()
+        resp = client.get('/histogram/data/')
+        self.assertEqual(resp.status_code, 200)
+        data = json_module.loads(resp.content)
+        self.assertIn('sequences', data)
+        self.assertIn('plot_svg', data)
+
+    @patch('aligner.views.run_histogram', side_effect=RuntimeError('R execution failed: stderr'))
+    def test_returns_500_on_error(self, mock_hist):
+        client = Client()
+        resp = client.get('/histogram/data/')
+        self.assertEqual(resp.status_code, 500)
+        data = json_module.loads(resp.content)
+        self.assertIn('error', data)
+        self.assertIn('R execution failed', data['error'])

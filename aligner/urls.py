@@ -13,4 +13,6 @@ urlpatterns = [
         views.serve_file,
         name="serve_file",
     ),
+    path("histogram/", views.index, name="histogram"),
+    path("histogram/data/", views.histogram_data, name="histogram_data"),
 ]

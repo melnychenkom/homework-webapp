@@ -28,7 +28,7 @@ p <- ggplot(df, aes(x=length)) +
      theme_minimal()
 svg(svg_path, width=6, height=4)
 print(p)
-dev.off()
+invisible(dev.off())
 
 svg_content <- readChar(svg_path, file.info(svg_path)$size)
 

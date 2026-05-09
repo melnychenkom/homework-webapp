@@ -48,8 +48,14 @@ def run_histogram() -> dict:
         )
         if result.returncode != 0:
             raise RuntimeError(f"R execution failed: {result.stderr[:500]}")
-        return json.loads(result.stdout)
+        try:
+            return json.loads(result.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"R produced invalid JSON: {exc}") from exc
     except subprocess.TimeoutExpired:
         raise RuntimeError("R script timed out")
     finally:
-        os.unlink(script_path)
+        try:
+            os.unlink(script_path)
+        except OSError:
+            pass

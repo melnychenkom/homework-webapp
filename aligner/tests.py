@@ -236,3 +236,12 @@ class RunHistogramTest(TestCase):
         with self.assertRaises(RuntimeError) as ctx:
             run_histogram()
         self.assertIn('timed out', str(ctx.exception))
+
+    @patch('aligner.pipeline.histogram.subprocess.run')
+    def test_raises_on_invalid_json(self, mock_run):
+        from aligner.pipeline.histogram import run_histogram
+        mock_run.return_value.returncode = 0
+        mock_run.return_value.stdout = 'Warning: not json\n{broken'
+        with self.assertRaises(RuntimeError) as ctx:
+            run_histogram()
+        self.assertIn('invalid JSON', str(ctx.exception))

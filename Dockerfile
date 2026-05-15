@@ -7,7 +7,7 @@ RUN npm run build
 
 FROM python:3.13-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends fasttree r-base r-cran-ggplot2 r-cran-jsonlite \
+RUN apt-get update && apt-get install -y --no-install-recommends fasttree r-base r-cran-ggplot2 r-cran-jsonlite default-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
@@ -22,6 +22,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
 
 COPY . .
+RUN mkdir -p /opt/java && javac aligner/pipeline/NucleotideCounter.java -d /opt/java/
 COPY --from=frontend /app/react ./react
 
 ENV DJANGO_SETTINGS_MODULE=webapp.settings

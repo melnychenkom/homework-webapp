@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+interface Nucleotides { A: number; C: number; G: number; T: number }
+
 interface Sequence {
   id: string
   length: number
   sequence: string
+  nucleotides: Nucleotides
 }
 
 interface HistogramData {
@@ -90,6 +93,10 @@ export default function HistogramPage() {
                   <tr>
                     <th className="fw-medium small">ID</th>
                     <th className="fw-medium small">Length</th>
+                    <th className="fw-medium small">A</th>
+                    <th className="fw-medium small">C</th>
+                    <th className="fw-medium small">G</th>
+                    <th className="fw-medium small">T</th>
                     <th className="fw-medium small">Sequence</th>
                   </tr>
                 </thead>
@@ -98,6 +105,10 @@ export default function HistogramPage() {
                     <tr key={seq.id}>
                       <td className="small">{seq.id}</td>
                       <td className="small">{seq.length}</td>
+                      <td className="small">{seq.nucleotides.A}</td>
+                      <td className="small">{seq.nucleotides.C}</td>
+                      <td className="small">{seq.nucleotides.G}</td>
+                      <td className="small">{seq.nucleotides.T}</td>
                       <td className="font-monospace small" style={{ wordBreak: 'break-all' }}>{seq.sequence}</td>
                     </tr>
                   ))}

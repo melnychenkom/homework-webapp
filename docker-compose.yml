@@ -10,4 +10,6 @@ services:
       - ./aligner:/app/aligner:z
       - ./webapp:/app/webapp:z
       - ./results:/app/results:z
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: ["sh", "-c", "python manage.py migrate && python manage.py runserver --noreload 0.0.0.0:8000"]

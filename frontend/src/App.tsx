@@ -158,8 +158,9 @@ export default function App() {
     <>
       <nav className="navbar navbar-expand navbar-dark bg-dark px-3 py-2">
         <Link className="navbar-brand small fw-semibold" to="/">DNA Phylogenetics</Link>
-        <div className="navbar-nav ms-auto">
+        <div className="navbar-nav ms-auto gap-1">
           <Link className="nav-link small" to="/histogram">Histogram</Link>
+          <a className="nav-link small" href="/admin/">Admin</a>
         </div>
       </nav>
       <Routes>
